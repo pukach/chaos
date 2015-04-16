@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Chaos</string>
+    <string name="input_prompt">Please input string up to 140 characters</string>
+    <string name="short_prompt">digit and letters</string>
+    <string name="err_too_short">String can\'t be empty</string>
+    <string name="err_too_long">Only strings up to 140 chars allowed</string>
+    <string name="err_illegal_input">Only digit and letters allowed</string>
+    <string name="button_ok">OK</string>
+    <string name="accepted">Accepted</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_second_activity">Second screen</string>
+    <string name="pattern">^[А-Яа-яA-Za-z0-9\\s]+</string>
+    <string name="file_name">chaos.dat</string>
+    <string name="msg_deleted">File \'chaos.dat\' deleted</string>
+    <string name="msg_not_deleted">Error:  file chaos.dat can\'t be deleted</string>
+    <string name="err_io">I/O Error</string>
+    <string name="err_file_not_found">File chaos.dat not found</string>
+    <string name="menu_delete">Delete file</string>
+    <string name="menu_about">About</string>
+    <string name="about_text">This app is inspired by my friend Kudymovsky Artem and coded for educational purpose</string>
+
+</resources>

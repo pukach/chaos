@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="header_size">26sp</dimen>
+    <dimen name="primary_text_size">22sp</dimen>
+    <dimen name="error_text_size">22sp</dimen>
+</resources>

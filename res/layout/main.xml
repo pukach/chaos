@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" android:id="@+id/mainRelativeLayout"
+                android:gravity="top|center_horizontal">
+
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" android:id="@+id/promptLinearLayout"
+            android:background="@color/secondary_text_color" android:layout_margin="5dp">
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/input_prompt"
+                android:id="@+id/promptTextView" android:textColor="@color/primary_text_color"
+                android:textSize="@dimen/header_size" android:gravity="center_vertical|center_horizontal"
+                android:background="@color/secondary_text_color" android:layout_margin="5dp"/>
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/header_size"
+            android:layout_below="@+id/promptLinearLayout" android:layout_alignParentLeft="true"
+            android:layout_marginTop="10dp" android:layout_margin="5dp" android:id="@+id/inputLinearLayout">
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/editText1" android:layout_weight="1" android:textColor="@color/secondary_text_color"
+                android:background="@color/light_primary_color" android:textSize="@dimen/primary_text_size"
+                android:editable="true" android:enabled="true"
+                android:hint="@string/short_prompt"/>
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_below="@+id/inputLinearLayout"
+            android:layout_centerHorizontal="true" android:layout_marginTop="10dp"
+            android:id="@+id/buttonsLinearLayout">
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_cancel"
+                android:id="@+id/buttonCancel"
+                android:textColor="@color/divider_color" android:clickable="true"
+                android:enabled="true"
+                android:focusable="true" android:layout_margin="5dp"/>
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_ok"
+                android:id="@+id/buttonOk"
+                android:clickable="true" android:enabled="true"
+                android:textColor="@color/divider_color"
+                android:focusable="true" android:layout_margin="5dp"/>
+    </LinearLayout>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_second_activity"
+            android:id="@+id/buttonSecAct"
+            android:clickable="true"
+            android:enabled="true"
+            android:focusable="true"
+            android:textColor="@color/divider_color"
+            android:layout_below="@+id/buttonsLinearLayout" android:layout_centerHorizontal="true"/>
+</RelativeLayout>

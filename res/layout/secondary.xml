@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" android:background="@color/primary_color"
+                android:id="@+id/secondaryRelativeLayout">
+    <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/outputText" android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
+            android:layout_marginTop="0dp"
+            android:textColor="@color/primary_text_color" android:textSize="@dimen/header_size"
+            android:textIsSelectable="true"
+            android:isScrollContainer="true"/>
+</RelativeLayout>
