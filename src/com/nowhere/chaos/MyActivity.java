@@ -32,7 +32,6 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
     final int DIALOG_ABOUT = 1;
     final int DIALOG_ERASE = 2;
 
-
     /**
      * Called when the activity is first created.
      */
@@ -59,7 +58,6 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
         btOk.setOnClickListener(this);
         btCancel.setOnClickListener(this);
         buttonSecAct.setOnClickListener(this);
-
 
 
     }
@@ -190,7 +188,7 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
         Resources res = getResources();
         String file = res.getString(R.string.file_name);
         BufferedWriter bw;
- //       File f;
+        //       File f;
 
         Log.d(TAG, "passed string: " + str);
         Log.d(TAG, "file name: " + file);
@@ -214,7 +212,7 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
 
     }
 
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
 
         Resources res = getResources();
 
@@ -225,25 +223,20 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
 
     }
 
-    public boolean onOptionsItemSelected( MenuItem mi){
+    public boolean onOptionsItemSelected(MenuItem mi) {
 
         Resources res = getResources();
 
-        switch (Integer.valueOf(mi.getItemId())){
+        switch (Integer.valueOf(mi.getItemId())) {
 
             case (1):
                 Log.d(TAG, "Menu selected: " + res.getString(R.string.menu_delete));
-                // NOTE: file will be erased without prompt
 
-                if(deleteFile(res.getString(R.string.file_name)))
-                    Toast.makeText(this, res.getString(R.string.msg_deleted), Toast.LENGTH_LONG).show();
-                else
-                    Toast.makeText(this, res.getString(R.string.msg_not_deleted), Toast.LENGTH_LONG).show();
-
+                // show prompt "delete or not delete" :)
+                showDialog(DIALOG_ERASE);
                 break;
             case (2):
                 Log.d(TAG, "Menu selected: " + res.getString(R.string.menu_about));
-//                Toast.makeText(this, res.getString(R.string.about_text), Toast.LENGTH_LONG).show();
                 showDialog(DIALOG_ABOUT);
                 break;
 
@@ -254,35 +247,55 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
     }
 
     // since I've yet did not know fragments I'll use deprecated methods
-    protected Dialog onCreateDialog(int id){
+    protected Dialog onCreateDialog(int id) {
 
         Resources res = getResources();
+        AlertDialog.Builder adb;
 
-        switch (id){
-            case (DIALOG_ABOUT):
-                AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        switch (id) {
+            case (DIALOG_ABOUT): // show simple alert dialog with info and "Ok" button
+                adb = new AlertDialog.Builder(this);
                 adb.setMessage(res.getString(R.string.about_text));
                 adb.setTitle(res.getString(R.string.menu_about));
-//                adb.setNeutralButton("OK", menuClickHandler);
+                adb.setNeutralButton(res.getString(R.string.button_ok), menuClickHandler);
                 return adb.create();
+
             case (DIALOG_ERASE):
-                break;
+                adb = new AlertDialog.Builder(this);
+                adb.setMessage(res.getString(R.string.msg_delete_promtp));
+                adb.setTitle(res.getString(R.string.menu_delete));
+                adb.setPositiveButton(res.getString(R.string.button_ok), menuClickHandler);
+                adb.setNegativeButton(res.getString(R.string.button_cancel), menuClickHandler);
+                return adb.create();
         }
         return super.onCreateDialog(id);
     }
 
-/*    OnClickListener menuClickHandler = new OnClickListener() {
+    DialogInterface.OnClickListener menuClickHandler = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-            switch (which){
+            Resources res = getResources();
+            switch (which) {
                 case Dialog.BUTTON_NEUTRAL:
-                    finish();
+                    dialog.dismiss();
+                    break;
                 case Dialog.BUTTON_POSITIVE:
-                    finish();
+                    // just try to delete file and make the toash with result message
+                    if (deleteFile(res.getString(R.string.file_name))) {
+                        Log.d(TAG, "file chaos.dat deleted");
+                        Toast.makeText(MyActivity.this, res.getString(R.string.msg_deleted), Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(MyActivity.this, res.getString(R.string.msg_not_deleted), Toast.LENGTH_LONG).show();
+                        Log.d(TAG, "file chaos.dat was not deleted");
+                    }
+                    dialog.dismiss();
+                    break;
                 case Dialog.BUTTON_NEGATIVE:
-                    finish();
+                    dialog.dismiss();
+                    break;
             }
 
         }
-    };*/
+    };
+
 }
