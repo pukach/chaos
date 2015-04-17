@@ -2,21 +2,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" android:id="@+id/mainRelativeLayout"
-                android:gravity="top|center_horizontal">
+                android:gravity="top|center_horizontal" style="@android:style/Theme.Holo">
 
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" android:id="@+id/promptLinearLayout"
-            android:background="@color/secondary_text_color" android:layout_margin="5dp">
+            android:layout_margin="5dp">
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/input_prompt"
-                android:id="@+id/promptTextView" android:textColor="@color/primary_text_color"
+                android:id="@+id/promptTextView"
                 android:textSize="@dimen/header_size" android:gravity="center_vertical|center_horizontal"
-                android:background="@color/secondary_text_color" android:layout_margin="5dp"/>
+                android:layout_margin="5dp"/>
     </LinearLayout>
     <LinearLayout
             android:orientation="horizontal"
@@ -55,14 +55,26 @@
                 android:textColor="@color/divider_color"
                 android:focusable="true" android:layout_margin="5dp"/>
     </LinearLayout>
-    <Button
+    <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/button_second_activity"
-            android:id="@+id/buttonSecAct"
-            android:clickable="true"
-            android:enabled="true"
-            android:focusable="true"
-            android:textColor="@color/divider_color"
-            android:layout_below="@+id/buttonsLinearLayout" android:layout_centerHorizontal="true"/>
+            android:layout_below="@+id/buttonsLinearLayout" android:layout_centerHorizontal="true">
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_3_activity"
+                android:id="@+id/button3Act" android:textColor="@color/divider_color"/>
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_2_activity"
+                android:id="@+id/button2Act"
+                android:clickable="true"
+                android:enabled="true"
+                android:focusable="true"
+                android:textColor="@color/divider_color"
+                android:layout_below="@+id/buttonsLinearLayout" android:layout_centerHorizontal="true"
+                />
+    </LinearLayout>
 </RelativeLayout>

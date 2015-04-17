@@ -5,9 +5,9 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-//import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.*;
@@ -27,7 +26,7 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
 
 
     public static final String TAG = "pukach"; // log tag
-    public static EditText inputString; // input window on main screen
+    public static EditText inputString; // input window on layout_activity_1 screen
     public Menu myMenu;
     final int DIALOG_ABOUT = 1;
     final int DIALOG_ERASE = 2;
@@ -40,49 +39,60 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.layout_activity_1);
 
-        Button btOk, btCancel, buttonSecAct; // buttons on main screen
+        Button btOk, btCancel, button2Act, button3Act; // buttons on layout_activity_1 screen
 
-        Log.d(TAG, "Primary activity created");
+        Log.d(TAG, "1 activity created");
 
 
         // find all my View
         inputString = (EditText) findViewById(R.id.editText1);
         btOk = (Button) findViewById(R.id.buttonOk);
         btCancel = (Button) findViewById(R.id.buttonCancel);
-        buttonSecAct = (Button) findViewById(R.id.buttonSecAct);
+        button2Act = (Button) findViewById(R.id.button2Act);
+        button3Act = (Button) findViewById(R.id.button3Act);
 
         // set MyActivity as onKey and onClick handler for input window buttons
         inputString.setOnKeyListener(this);
         btOk.setOnClickListener(this);
         btCancel.setOnClickListener(this);
-        buttonSecAct.setOnClickListener(this);
+        button2Act.setOnClickListener(this);
+        button3Act.setOnClickListener(this);
 
 
     }
 
     public void onClick(View v) {
+
+        Intent intent;
         switch (v.getId()) {
 
             // check for input rules, write to file if ok and clean input
             case R.id.buttonOk:
-                Log.d(TAG, "Presed ОК");
+                Log.d(TAG, "Presed ОК button");
                 textCheck(inputString.getText().toString());
                 inputString.setText(null);
                 break;
 
             // clean input and set hint
             case R.id.buttonCancel:
-                Log.d(TAG, "Pressed Cancel");
+                Log.d(TAG, "Pressed Cancel button");
                 inputString.setText(null);
                 inputString.setHint(getString(R.string.short_prompt));
                 break;
 
-            // call second screen and clean input
-            case R.id.buttonSecAct:
-                Log.d(TAG, "Pressed Второй экран");
-                Intent intent = new Intent(this, SecondActivity.class);
+            // call 2 screen and clean input
+            case R.id.button2Act:
+                Log.d(TAG, "Pressed Strings button");
+                intent = new Intent(this, MyActivity2.class);
+                startActivity(intent);
+                inputString.setText(null);
+                break;
+            // call 3 screen and clean input
+            case R.id.button3Act:
+                Log.d(TAG, "Pressed Strings button");
+                intent = new Intent(this, MyActivity3.class);
                 startActivity(intent);
                 inputString.setText(null);
                 break;
@@ -144,42 +154,42 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG, "Primary activity paused");
+        Log.d(TAG, "1 activity paused");
     }
 
     // mostly for understanding activity life cycle
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "Primary activity resumed");
+        Log.d(TAG, "1 activity resumed");
     }
 
     // mostly for understanding activity life cycle
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(TAG, "Primary activity stoped");
+        Log.d(TAG, "1 activity stoped");
     }
 
     // mostly for understanding activity life cycle
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.d(TAG, "Primary activity restarted");
+        Log.d(TAG, "1 activity restarted");
     }
 
     // mostly for understanding activity life cycle
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG, "Primary activity started");
+        Log.d(TAG, "1 activity started");
     }
 
     // mostly for understanding activity life cycle
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "Primary activity destroyed");
+        Log.d(TAG, "1 activity destroyed");
     }
 
 

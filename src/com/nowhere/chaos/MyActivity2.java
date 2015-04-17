@@ -15,16 +15,16 @@ import java.io.InputStreamReader;
 /**
  * Created by pukach on 4/13/15.
  */
-public class SecondActivity extends Activity {
+public class MyActivity2 extends Activity {
 
     public TextView tw; // output view on secondary screen
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.secondary);
+        setContentView(R.layout.layout_activity_2);
 
-        Log.d(MyActivity.TAG, "Secondary activity created");
+        Log.d(MyActivity.TAG, "2 activity created");
 
         tw = (TextView) findViewById(R.id.outputText);
 
@@ -34,29 +34,29 @@ public class SecondActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(MyActivity.TAG, "Secondary activity started");
+        Log.d(MyActivity.TAG, "2 activity started");
     }
 
     // mostly for understanding activity life cycle
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // let's set main screen's input string hint from "accepted" to prompt
+        // let's set layout_activity_1 screen's input string hint from "accepted" to prompt
         MyActivity.inputString.setHint(getString(R.string.short_prompt));
-        Log.d(MyActivity.TAG, "Secondary activity destroyed");
+        Log.d(MyActivity.TAG, "2 activity destroyed");
     }
 
     // mostly for understanding activity life cycle
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(MyActivity.TAG, "Secondary activity paused");
+        Log.d(MyActivity.TAG, "2 activity paused");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(MyActivity.TAG, "Secondary activity resumed");
+        Log.d(MyActivity.TAG, "2 activity resumed");
         // when set visible read all saved data from file and display it
         readFromFile();
 
@@ -66,14 +66,14 @@ public class SecondActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(MyActivity.TAG, "Secondary activity stoped");
+        Log.d(MyActivity.TAG, "2 activity stoped");
     }
 
     // mostly for understanding activity life cycle
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.d(MyActivity.TAG, "Secondary activity restarted");
+        Log.d(MyActivity.TAG, "2 activity restarted");
     }
 
 
@@ -88,7 +88,7 @@ public class SecondActivity extends Activity {
         try {
             br = new BufferedReader(new InputStreamReader(openFileInput(file))); // open file for reading
 
-            // read until end of file and write lines to secondary screen
+            // read until end of file and write lines to 2 screen
             while ((str = br.readLine()) != null) {
                 Log.d(MyActivity.TAG, "readed from file: " + str);
                 tw.append(str + "\n");
