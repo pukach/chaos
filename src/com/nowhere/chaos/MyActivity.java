@@ -25,8 +25,8 @@ import static android.view.View.*;
 public class MyActivity extends Activity implements OnClickListener, OnKeyListener {
 
 
-    public static final String TAG = "pukach"; // log tag
-    public static EditText inputString; // input window on layout_activity_1 screen
+    public static final String TAG = "pukach";          // log tag
+    public static EditText inputString;
     public Menu myMenu;
     final int DIALOG_ABOUT = 1;
     final int DIALOG_ERASE = 2;
@@ -41,7 +41,7 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_activity_1);
 
-        Button btOk, btCancel, button2Act, button3Act; // buttons on layout_activity_1 screen
+        Button btOk, btCancel, button2Act, button3Act;
 
         Log.d(TAG, "1 activity created");
 
@@ -91,7 +91,7 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
                 break;
             // call 3 screen and clean input
             case R.id.button3Act:
-                Log.d(TAG, "Pressed Strings button");
+                Log.d(TAG, "Pressed URL button");
                 intent = new Intent(this, MyActivity3.class);
                 startActivity(intent);
                 inputString.setText(null);
@@ -115,12 +115,12 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
         return false;
     }
 
-
+    // check text for input criteria, if ok write it to file
     private void textCheck(String str) {
 
         Resources res = getResources();
-        int limit = res.getInteger(R.integer.string_size_limit); // get string limit
-        String pattern = res.getString(R.string.pattern); // get validity pattern
+        int limit = res.getInteger(R.integer.string_size_limit);
+        String pattern = res.getString(R.string.pattern);
 
         Log.d(TAG, "limit == " + limit);
         Log.d(TAG, "pattern == " + pattern);
@@ -136,7 +136,6 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
         } else {
             //set input window hint to initial prompt and make a toast with appropriate error message
             inputString.setHint(getString(R.string.short_prompt));
-
             if (str.isEmpty()) {
                 Toast.makeText(this, res.getString(R.string.err_too_short), Toast.LENGTH_LONG).show();
             } else if (str.length() > limit) {
@@ -144,10 +143,7 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
             } else if (!str.matches(pattern)) {
                 Toast.makeText(this, res.getString(R.string.err_illegal_input), Toast.LENGTH_LONG).show();
             }
-
         }
-
-
     }
 
     // mostly for understanding activity life cycle
@@ -196,8 +192,8 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
     private void writeToFile(String str) {
 
         Resources res = getResources();
-        String file = res.getString(R.string.file_name);
-        BufferedWriter bw;
+        String file = res.getString(R.string.str_file_name);
+        BufferedWriter bw = null;
         //       File f;
 
         Log.d(TAG, "passed string: " + str);
@@ -205,12 +201,11 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
 
         // did not used "try with resources" for compatibility with API lower than 19
         try {
-            bw = new BufferedWriter(new OutputStreamWriter(openFileOutput(file, Context.MODE_APPEND))); // open file
-            bw.write(str + "\n"); // write checked string + new line char
+            bw = new BufferedWriter(new OutputStreamWriter(openFileOutput(file, Context.MODE_APPEND)));
+            bw.write(str + "\n");
             // here I'm just find where is my file stored
 //            f = getFilesDir();
 //            Log.d(TAG, "file stored in: " + f.getCanonicalPath());
-            bw.close(); // close file
 
         } catch (FileNotFoundException exc) {
             Log.d(TAG, "File not found");
@@ -218,6 +213,15 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
         } catch (IOException exc) {
             Log.d(TAG, "IO Exception");
             Toast.makeText(this, res.getString(R.string.err_io), Toast.LENGTH_LONG).show();
+        }
+        finally {
+            if(bw != null)
+                try{
+                    bw.close();
+                }catch (IOException exc) {
+                    Log.d(TAG, "IO Exception");
+                    Toast.makeText(this, res.getString(R.string.err_io), Toast.LENGTH_LONG).show();
+                }
         }
 
     }
@@ -263,7 +267,7 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
         AlertDialog.Builder adb;
 
         switch (id) {
-            case (DIALOG_ABOUT): // show simple alert dialog with info and "Ok" button
+            case (DIALOG_ABOUT):
                 adb = new AlertDialog.Builder(this);
                 adb.setMessage(res.getString(R.string.about_text));
                 adb.setTitle(res.getString(R.string.menu_about));
@@ -280,6 +284,8 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
         }
         return super.onCreateDialog(id);
     }
+    //   1l0O
+
 
     DialogInterface.OnClickListener menuClickHandler = new DialogInterface.OnClickListener() {
         @Override
@@ -290,8 +296,8 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
                     dialog.dismiss();
                     break;
                 case Dialog.BUTTON_POSITIVE:
-                    // just try to delete file and make the toash with result message
-                    if (deleteFile(res.getString(R.string.file_name))) {
+                    // just try to delete file and make the toash with result message 0
+                    if (deleteFile(res.getString(R.string.str_file_name))) {
                         Log.d(TAG, "file chaos.dat deleted");
                         Toast.makeText(MyActivity.this, res.getString(R.string.msg_deleted), Toast.LENGTH_LONG).show();
                     } else {
@@ -304,8 +310,6 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
                     dialog.dismiss();
                     break;
             }
-
         }
     };
-
 }

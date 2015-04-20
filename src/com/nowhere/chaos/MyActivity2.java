@@ -17,7 +17,7 @@ import java.io.InputStreamReader;
  */
 public class MyActivity2 extends Activity {
 
-    public TextView tw; // output view on secondary screen
+    public TextView tw;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,9 +80,9 @@ public class MyActivity2 extends Activity {
     private void readFromFile() {
 
         Resources res = getResources();
-        String file = res.getString(R.string.file_name);
+        String file = res.getString(R.string.str_file_name);
         String str;
-        BufferedReader br;
+        BufferedReader br = null;
 
         // did not used "try with resources" for compatibility with API lower than 19
         try {
@@ -93,7 +93,6 @@ public class MyActivity2 extends Activity {
                 Log.d(MyActivity.TAG, "readed from file: " + str);
                 tw.append(str + "\n");
             }
-            br.close(); // try to close file
 
         } catch (FileNotFoundException exc) {
             Log.d(MyActivity.TAG, "File not found");
@@ -101,6 +100,14 @@ public class MyActivity2 extends Activity {
         } catch (IOException exc) {
             Log.d(MyActivity.TAG, "IO Exception");
             Toast.makeText(this, res.getString(R.string.err_io), Toast.LENGTH_LONG).show();
+        } finally {
+            if (br != null)
+                try {
+                    br.close();
+                } catch (IOException exc) {
+                    Log.d(MyActivity.TAG, "IO Exception");
+                    Toast.makeText(this, res.getString(R.string.err_io), Toast.LENGTH_LONG).show();
+                }
         }
     }
 

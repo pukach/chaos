@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">Chaos</string>
     <string name="input_prompt">Please input string up to 140 characters</string>
+    <string name="url_checker_prompt">Please input valid URL</string>
     <string name="short_prompt">digits and letters</string>
     <string name="err_too_short">String can\'t be empty</string>
     <string name="err_too_long">Only strings up to 140 chars allowed</string>
@@ -12,7 +13,8 @@
     <string name="button_2_activity">Strings</string>
     <string name="button_3_activity">URL</string>
     <string name="pattern">^[А-Яа-яA-Za-z0-9\\s]+</string>
-    <string name="file_name">chaos.dat</string>
+    <string name="str_file_name">chaos.dat</string>
+    <string name="url_file_name">chaosurl.dat</string>
     <string name="msg_deleted">File \'chaos.dat\' deleted</string>
     <string name="msg_not_deleted">Error:  file chaos.dat can\'t be deleted</string>
     <string name="msg_delete_promtp">File \'chaos.dat\' will be deleted.\nAre you sure?</string>
@@ -20,6 +22,11 @@
     <string name="err_file_not_found">File \'chaos.dat\' not found</string>
     <string name="menu_delete">Delete file</string>
     <string name="menu_about">About</string>
+    <string name="err_bad_url">Malformed URL</string>
+    <string name="err_cant_open_url">Web page is not available</string>
+    <string name="err_network">Network error</string>
+    <string name="err_interrupted">Interrupted exception catched</string>
+    <string name="err_execution">Execution exception catched</string>
     <string name="about_text">This app is inspired by my friend Kudymovsky Artem and coded for educational purpose</string>
 
 </resources>

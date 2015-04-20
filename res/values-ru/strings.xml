@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">Chaos</string>
     <string name="input_prompt">Введите строку длиной до 140 символов</string>
+    <string name="url_checker_prompt">Введите существующий URL</string>
     <string name="short_prompt">буквы и цифры</string>
     <string name="err_too_short">Строка не может быть пустой</string>
     <string name="err_too_long">В строке не должно быть больше 140 символов</string>
@@ -12,7 +13,8 @@
     <string name="button_2_activity">Строки</string>
     <string name="button_3_activity">URL</string>
     <string name="pattern">^[А-Яа-яA-Za-z0-9\\s]+</string>
-    <string name="file_name">chaos.dat</string>
+    <string name="str_file_name">chaos.dat</string>
+    <string name="url_file_name">chaosurl.dat</string>
     <string name="msg_deleted">Файл \'chaos.dat\' удален</string>
     <string name="msg_not_deleted">Ошибка:  файл chaos.dat не может быть удален</string>
     <string name="msg_delete_promtp">Файл \'chaos.dat\' будет удален.\nВы уверены?</string>
@@ -20,6 +22,11 @@
     <string name="err_file_not_found">Файл \'chaos.dat\' не найден</string>
     <string name="menu_delete">Удалить файл</string>
     <string name="menu_about">О программе</string>
+    <string name="err_bad_url">Неправильно введен URL</string>
+    <string name="err_cant_open_url">Web-страница недоступна</string>
+    <string name="err_network">Ошибка сети</string>
+    <string name="err_interrupted">Сгенерировано исключение InterruptedException</string>
+    <string name="err_execution">Сгенерировано исключение ExecutionException</string>
     <string name="about_text">Эта программа пишется под руководством моего друга Артема Кудымовского исключительно в целях моего образования</string>
 
 </resources>
