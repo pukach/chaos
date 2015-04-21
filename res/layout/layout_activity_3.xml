@@ -13,7 +13,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/url_checker_prompt"
-                android:id="@+id/urlPromptTextView" android:textSize="@dimen/header_size" android:singleLine="false"/>
+                android:id="@+id/urlPromptTextView" android:textSize="@dimen/primary_text_size" android:singleLine="false"
+                android:textColor="@android:color/secondary_text_dark"/>
     </LinearLayout>
     <EditText
             android:layout_width="fill_parent"
@@ -22,12 +23,21 @@
             android:background="@color/light_primary_color"
             android:layout_below="@+id/urlPromptLinearLayout" android:layout_alignParentStart="true"
             android:textColor="@color/primary_text_color" android:layout_margin="5dp"/>
-    <TextView
+    <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="fill_parent"
+            android:layout_height="wrap_content" android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" android:id="@+id/buttonLinearLayout">
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_check"
+                android:id="@+id/btChk" android:layout_alignParentBottom="true"
+                android:layout_gravity="bottom"/>
+    </LinearLayout>
+    <ListView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/md5TextView"
-            android:isScrollContainer="true" android:textIsSelectable="true" android:enabled="true"
-            android:focusable="true" android:focusableInTouchMode="true" android:editable="false"
-            android:layout_alignParentStart="true" android:layout_below="@+id/editUrl"
-            />
+            android:id="@+id/sitelistView" android:layout_below="@+id/editUrl" android:layout_centerHorizontal="true"
+            android:layout_above="@+id/buttonLinearLayout" android:choiceMode="multipleChoice"/>
 </RelativeLayout>

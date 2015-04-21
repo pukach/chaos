@@ -8,6 +8,7 @@
     <string name="err_too_long">Only strings up to 140 chars allowed</string>
     <string name="err_illegal_input">Only digit and letters allowed</string>
     <string name="button_ok">OK</string>
+    <string name="button_check">Check</string>
     <string name="accepted">Accepted</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_2_activity">Strings</string>

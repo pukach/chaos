@@ -8,6 +8,7 @@
     <string name="err_too_long">В строке не должно быть больше 140 символов</string>
     <string name="err_illegal_input">Допускаются только буквы и цифры</string>
     <string name="button_ok">ОК</string>
+    <string name="button_check">Проверка</string>
     <string name="accepted">Принято</string>
     <string name="button_cancel">Отмена</string>
     <string name="button_2_activity">Строки</string>
