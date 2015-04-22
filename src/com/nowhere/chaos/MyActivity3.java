@@ -1,8 +1,12 @@
 package com.nowhere.chaos;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,6 +25,9 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -32,6 +39,7 @@ public class MyActivity3 extends Activity implements View.OnKeyListener, View.On
     private static ArrayList<ColoredString> urls;
     private static MyArrayAdapter adapter;
     private static ListView lv;
+    public URLDBHelper url_db;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,16 +63,39 @@ public class MyActivity3 extends Activity implements View.OnKeyListener, View.On
         inputUrl.setOnKeyListener(this);
         btnCheck.setOnClickListener(this);
 
-        ColoredString jane = new ColoredString("Jane", Color.RED);
-        ColoredString kate = new ColoredString("Kate", Color.GREEN);
-        ColoredString ruth = new ColoredString("Ruth", Color.BLUE);
+        url_db = new URLDBHelper(this);
 
-        urls.add(0, jane);
-        urls.add(0, kate);
-        urls.add(0, ruth);
-        adapter.notifyDataSetChanged();
+        SQLiteDatabase db = url_db.getReadableDatabase();
+        Log.d(MyActivity.TAG, "Rows in DB: ");
+        Cursor cursor = db.query(URLDBHelper.DB_TABLE, null, null, null, null, null, null);
 
+        if (cursor.moveToFirst()) {
+
+            int id_column_index = cursor.getColumnIndex(URLDBHelper.KEY_ID);
+            int url_column_index = cursor.getColumnIndex(URLDBHelper.KEY_URL);
+            int md5_column_index = cursor.getColumnIndex(URLDBHelper.KEY_MD5);
+            int changed_column_index = cursor.getColumnIndex(URLDBHelper.KEY_CHANGED);
+
+            // fill our listview by url's from database
+            do {
+                Log.d(MyActivity.TAG, "ID " + cursor.getInt(id_column_index) +
+                        "; URL " + cursor.getString(url_column_index) +
+                        "; MD5 " + cursor.getString(md5_column_index) +
+                        "; CHANGED " + cursor.getInt(changed_column_index));
+                urls.add(0, new ColoredString(cursor.getString(url_column_index)));
+
+            }
+            while (cursor.moveToNext());
+            adapter.notifyDataSetChanged();
+
+
+        } else {
+            Log.d(MyActivity.TAG, "BD empty ");
+        }
+        cursor.close();
+        url_db.close();
     }
+
 
     class ColoredString {
 
@@ -77,7 +108,19 @@ public class MyActivity3 extends Activity implements View.OnKeyListener, View.On
             this.color = color;
         }
 
-        public void changeColor(int new_color){
+        // constructor with default color
+        ColoredString(String string) {
+            this.string = string;
+            this.color = getResources().getColor(R.color.primary_color);
+        }
+
+        // construct as copy
+        ColoredString(ColoredString cs) {
+            this.string = cs.string;
+            this.color = cs.color;
+        }
+
+        public void changeColor(int new_color) {
             this.color = new_color;
         }
 
@@ -122,21 +165,41 @@ public class MyActivity3 extends Activity implements View.OnKeyListener, View.On
 
         Log.d(MyActivity.TAG, "Button CHK pressed");
 
+        // prepare index for mapping since objects in ListView and DB stored in reversed order
+        List<Integer> reverse_index = new ArrayList<Integer>();
+        // ... i+1 since id's in DB starts from 1, not from 0
+        for (int i = 0; i < urls.size(); i++) reverse_index.add(i + 1);
+        Log.d(MyActivity.TAG, "initial index :" + reverse_index);
+        Collections.sort(reverse_index, Collections.reverseOrder());
+        Log.d(MyActivity.TAG, "reverse index :" + reverse_index);
+
+
         // get all checked positions in urls list
         SparseBooleanArray sb = lv.getCheckedItemPositions();
         for (int i = 0; i < sb.size(); i++) {
             int key = sb.keyAt(i);
-            // log checked strings and change color
+            // change color and deselect item in ListView
             if (sb.get(key)) {
-                ColoredString cs = urls.get(key);
-                cs.changeColor(Color.DKGRAY);
-                urls.set(key, cs);
-                Log.d(MyActivity.TAG, "Checked: " + cs.string);
+                Log.d(MyActivity.TAG, "ListView checked key: " + key + ", DB _id: " + reverse_index.get(key) + ", url: " + urls.get(key).string);
+
+                try {
+                    if ((new CheckIsPageChanged().execute(reverse_index.get(key)).get()) != 0) {
+                        ColoredString cs = new ColoredString(urls.get(key));
+                        cs.changeColor(getResources().getColor(R.color.changed_color));
+                        urls.set(key, cs);
+                    }
+                } catch (InterruptedException ex) {
+                    Toast.makeText(MyActivity3.this, getResources().getString(R.string.err_interrupted), Toast.LENGTH_LONG).show();
+                    Log.d(MyActivity.TAG, "InterruptedException catched");
+                } catch (ExecutionException ex) {
+                    Toast.makeText(MyActivity3.this, getResources().getString(R.string.err_interrupted), Toast.LENGTH_LONG).show();
+                    Log.d(MyActivity.TAG, "ExecutionException catched");
+
+                }
+                lv.setItemChecked(key, false);
             }
+            adapter.notifyDataSetChanged();
         }
-        adapter.notifyDataSetChanged();
-
-
     }
 
     public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -151,21 +214,27 @@ public class MyActivity3 extends Activity implements View.OnKeyListener, View.On
 
             Log.d(MyActivity.TAG, "onKey: " + str);
 
+            SQLiteDatabase db = url_db.getWritableDatabase();
+            ContentValues content_value = new ContentValues();
 
             try {
                 // ...
                 switch (new CheckUrl().execute(str).get()) {
                     case 0:
-                        // ... comment for future usage
                         PageInfo pi = new PageInfo(str);
                         Toast.makeText(MyActivity3.this, pi.md5sum, Toast.LENGTH_LONG).show();
-                        // ... add new string to the end of list
-                        ColoredString cstr = new ColoredString(str, Color.YELLOW);
-                        urls.add(urls.size(), cstr);
+                        content_value.put(URLDBHelper.KEY_URL, pi.url);
+                        content_value.put(URLDBHelper.KEY_MD5, pi.md5sum);
+                        content_value.put(URLDBHelper.KEY_CHANGED, 0);
+                        long row_id = db.insert(URLDBHelper.DB_TABLE, null, content_value);
+                        Log.d(MyActivity.TAG, "DB insert on row " + row_id);
 
-                        adapter.notifyDataSetChanged();
-
+                        // add new string to the head of list, deselect all items and clear input string
+                        ColoredString cstr = new ColoredString(str, getResources().getColor(R.color.accent_color));
+                        urls.add(0, cstr);
+                        for (int i = 0; i < urls.size(); i++) lv.setItemChecked(i, false);
                         inputUrl.setText(null);
+                        adapter.notifyDataSetChanged();
                         break;
                     case 1:
                         Toast.makeText(MyActivity3.this, res.getString(R.string.err_bad_url), Toast.LENGTH_LONG).show();
@@ -174,7 +243,6 @@ public class MyActivity3 extends Activity implements View.OnKeyListener, View.On
                         Toast.makeText(MyActivity3.this, res.getString(R.string.err_cant_open_url), Toast.LENGTH_LONG).show();
                         break;
                 }
-                return true;
 
             } catch (InterruptedException ex) {
                 Toast.makeText(MyActivity3.this, res.getString(R.string.err_interrupted), Toast.LENGTH_LONG).show();
@@ -182,9 +250,11 @@ public class MyActivity3 extends Activity implements View.OnKeyListener, View.On
             } catch (ExecutionException ex) {
                 Toast.makeText(MyActivity3.this, res.getString(R.string.err_interrupted), Toast.LENGTH_LONG).show();
                 Log.d(MyActivity.TAG, "ExecutionException catched");
+            } finally {
+                url_db.close();
             }
+            return true;
         }
-
         return false;
     }
 
@@ -232,43 +302,57 @@ public class MyActivity3 extends Activity implements View.OnKeyListener, View.On
     }
 
 
-/*
+    // check is page md5 changed since initial add to database
+    class CheckIsPageChanged extends AsyncTask<Integer, Void, Integer> {
 
-    private void writeToFile(String str) {
+        @Override
+        protected Integer doInBackground(Integer... db_row_index) {
 
-        Resources res = getResources();
-        String file = res.getString(R.string.tmp_file_name);
-        BufferedWriter bw = null;
-        Log.d(MyActivity.TAG, "passed string: " + str);
-        Log.d(MyActivity.TAG, "file name: " + file);
 
-        // did not used "try with resources" for compatibility with API lower than 19
-        try {
-            bw = new BufferedWriter(new OutputStreamWriter(openFileOutput(file, Context.MODE_APPEND))); // open file
-            bw.write(str);
-            // here I'm just find where is my file stored
-//            f = getFilesDir();
-//            Log.d(TAG, "file stored in: " + f.getCanonicalPath());
+            SQLiteDatabase db = url_db.getReadableDatabase();
+            Cursor cursor = db.query(URLDBHelper.DB_TABLE, null, " _id=" + db_row_index[0], null, null, null, null);
 
-        } catch (FileNotFoundException exc) {
-            Log.d(MyActivity.TAG, "File not found");
-            Toast.makeText(this, res.getString(R.string.err_file_not_found), Toast.LENGTH_LONG).show();
-        } catch (IOException exc) {
-            Log.d(MyActivity.TAG, "IO Exception");
-            Toast.makeText(this, res.getString(R.string.err_io), Toast.LENGTH_LONG).show();
-        } finally {
-            if (bw != null)
-                try {
-                    bw.close(); // try to close file
-                } catch (IOException exc) {
-                    Log.d(MyActivity.TAG, "IO Exception");
-                    Toast.makeText(this, res.getString(R.string.err_io), Toast.LENGTH_LONG).show();
+            if (cursor.moveToFirst()) {
+
+                int id_column_index = cursor.getColumnIndex(URLDBHelper.KEY_ID);
+                int url_column_index = cursor.getColumnIndex(URLDBHelper.KEY_URL);
+                int md5_column_index = cursor.getColumnIndex(URLDBHelper.KEY_MD5);
+                int changed_column_index = cursor.getColumnIndex(URLDBHelper.KEY_CHANGED);
+
+                Log.d(MyActivity.TAG, "ChkIsPgChanged read from db: ID " + cursor.getInt(id_column_index) +
+                        "; URL " + cursor.getString(url_column_index) +
+                        "; MD5 " + cursor.getString(md5_column_index) +
+                        "; CHANGED " + cursor.getInt(changed_column_index));
+                PageInfo pi = new PageInfo(cursor.getString(url_column_index));
+                if (pi.md5sum.equals(cursor.getString(md5_column_index))) {
+                    Log.d(MyActivity.TAG, "MD5 equals: now " + pi.md5sum + ", was " + cursor.getString(md5_column_index));
+                    cursor.close();
+                    url_db.close();
+                    return 0;
+                } else {
+                    Log.d(MyActivity.TAG, "MD5 changed: now " + pi.md5sum + ", was " + cursor.getString(md5_column_index));
+                    cursor.close();
+                    url_db.close();
+                    return 1;
                 }
+
+            } else {
+                Log.d(MyActivity.TAG, "BD empty ");
+            }
+            cursor.close();
+            url_db.close();
+
+            return 0;
         }
 
+
+        @Override
+        protected void onPostExecute(Integer i) {
+            super.onPostExecute(i);
+        }
     }
 
-*/
+
 }
 
 // just shell for PageCrawler
@@ -384,7 +468,7 @@ class PageCrawler implements Runnable {
 class CheckUrl extends AsyncTask<String, Void, Integer> {
 
     URL url = null;
-    int state = 0;
+    //    int state = 0;
     BufferedReader reader = null;
 
     @Override
@@ -417,10 +501,49 @@ class CheckUrl extends AsyncTask<String, Void, Integer> {
 
     @Override
     protected void onPostExecute(Integer i) {
-        state = (int) i;
+        super.onPostExecute(i);
     }
 }
 
+
+class URLDBHelper extends SQLiteOpenHelper {
+
+    //Resources res = Resources.getSystem();
+
+    private static final String URL_DB_NAME = "chaosurl.db"; //res.getString(R.string.url_db_name);
+    private static final int DB_VERSION = 1;
+
+    protected static final String DB_TABLE = "URL_MD5_TABLE";
+    protected static final String KEY_ID = "_id";
+    protected static final String KEY_URL = "_URL";
+    protected static final String KEY_MD5 = "_MD5";
+    protected static final String KEY_CHANGED = "_CHANGED";
+
+    private static final String DB_CREATE = "create table " + DB_TABLE + " (" +
+            KEY_ID + " integer primary key autoincrement, " +
+            KEY_URL + " text not null, " +
+            KEY_MD5 + " text not null, " +
+            KEY_CHANGED + " integer);";
+
+
+    URLDBHelper(Context context) {
+        super(context, URL_DB_NAME, null, DB_VERSION);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL(DB_CREATE);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int old_version, int new_version) {
+        Log.d(MyActivity.TAG, "Upgrade DB from version " + old_version + new_version);
+        db.execSQL("DROP TABLE IF IT EXISTS " + DB_TABLE);
+        onCreate(db);
+    }
+
+
+}
 
 
 

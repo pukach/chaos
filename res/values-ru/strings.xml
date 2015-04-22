@@ -15,7 +15,7 @@
     <string name="button_3_activity">URL</string>
     <string name="pattern">^[А-Яа-яA-Za-z0-9\\s]+</string>
     <string name="str_file_name">chaos.dat</string>
-    <string name="url_file_name">chaosurl.dat</string>
+    <string name="url_db_name">chaosurl.db</string>
     <string name="msg_deleted">Файл \'chaos.dat\' удален</string>
     <string name="msg_not_deleted">Ошибка:  файл chaos.dat не может быть удален</string>
     <string name="msg_delete_promtp">Файл \'chaos.dat\' будет удален.\nВы уверены?</string>
