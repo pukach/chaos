@@ -9,20 +9,25 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.*;
 
 import static android.view.View.*;
 
-public class MyActivity extends Activity implements OnClickListener, OnKeyListener {
+public class MyActivity extends Activity implements OnClickListener, OnKeyListener,
+        TextView.OnEditorActionListener {
 
 
     public static final String TAG = "pukach";          // log tag
@@ -45,8 +50,8 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
 
         Log.d(TAG, "1 activity created");
 
-
         // find all my View
+
         inputString = (EditText) findViewById(R.id.editText1);
         btOk = (Button) findViewById(R.id.buttonOk);
         btCancel = (Button) findViewById(R.id.buttonCancel);
@@ -54,12 +59,14 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
         button3Act = (Button) findViewById(R.id.button3Act);
 
         // set MyActivity as onKey and onClick handler for input window buttons
+        // ... set hardware keyboard handler
         inputString.setOnKeyListener(this);
+        // ... set software keyboard handler
+        inputString.setOnEditorActionListener(this);
         btOk.setOnClickListener(this);
         btCancel.setOnClickListener(this);
         button2Act.setOnClickListener(this);
         button3Act.setOnClickListener(this);
-
 
     }
 
@@ -103,17 +110,21 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
 
     }
 
+    // handle hardware keyboard "Enter"
     public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+        Log.d(TAG, "OnKey called (Hardware keyboard)");
 
         // if "Enter" pressed check text for validity and clean input
         if (event.getAction() == KeyEvent.ACTION_DOWN && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-
+            Log.d(TAG, "OnKey catched Enter");
             textCheck(inputString.getText().toString());
             inputString.setText(null);
             return true;
         }
         return false;
     }
+
 
     // check text for input criteria, if ok write it to file
     private void textCheck(String str) {
@@ -312,4 +323,26 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
             }
         }
     };
+
+
+
+    // handle "Enter" from software keyboard. don't forget that event can be null!
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+        Log.d(TAG, "onEditorAction (Software keyboard) actionId: " + actionId+ " event: " + event);
+
+        // if "Enter" pressed check text for validity and clean input
+        if ((actionId == EditorInfo.IME_NULL) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+            Log.d(TAG, "onEditorAction catched Done");
+            textCheck(inputString.getText().toString());
+            inputString.setText(null);
+            return true;
+        }
+        return false;
+    }
+
+
 }
+
+

@@ -29,8 +29,10 @@
                 android:layout_height="match_parent"
                 android:id="@+id/editText1" android:layout_weight="1" android:textColor="@color/secondary_text_color"
                 android:background="@color/light_primary_color" android:textSize="@dimen/primary_text_size"
-                android:editable="true" android:enabled="true"
-                android:hint="@string/short_prompt"/>
+                android:editable="true" android:enabled="true" android:focusable="true"
+                android:hint="@string/short_prompt"
+                android:imeOptions="actionDone"
+                android:inputType="text"/>
     </LinearLayout>
     <LinearLayout
             android:orientation="horizontal"
@@ -59,7 +61,8 @@
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/buttonsLinearLayout" android:layout_centerHorizontal="true">
+            android:layout_below="@+id/buttonsLinearLayout" android:layout_centerHorizontal="true"
+            android:id="@+id/linearLayout">
         <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -77,4 +80,5 @@
                 android:layout_below="@+id/buttonsLinearLayout" android:layout_centerHorizontal="true"
                 />
     </LinearLayout>
+
 </RelativeLayout>

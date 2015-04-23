@@ -16,6 +16,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 
 import java.io.*;
@@ -33,7 +34,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by pukach on 4/17/15.
  */
-public class MyActivity3 extends Activity implements View.OnKeyListener, View.OnClickListener {
+public class MyActivity3 extends Activity implements View.OnKeyListener, View.OnClickListener, TextView.OnEditorActionListener {
 
     private static EditText inputUrl;
     private static ArrayList<ColoredString> urls;
@@ -61,6 +62,7 @@ public class MyActivity3 extends Activity implements View.OnKeyListener, View.On
         // assign adapter and handlers
         lv.setAdapter(adapter);
         inputUrl.setOnKeyListener(this);
+        inputUrl.setOnEditorActionListener(this);
         btnCheck.setOnClickListener(this);
 
         url_db = new URLDBHelper(this);
@@ -95,6 +97,7 @@ public class MyActivity3 extends Activity implements View.OnKeyListener, View.On
         cursor.close();
         url_db.close();
     }
+
 
 
     class ColoredString {
@@ -202,61 +205,84 @@ public class MyActivity3 extends Activity implements View.OnKeyListener, View.On
         }
     }
 
-    public boolean onKey(View v, int keyCode, KeyEvent event) {
+    // handle "Enter" from software keyboard. don't forget that event can be null!
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 
-        Resources res = getResources();
+        Log.d(MyActivity.TAG, "onEditor actionId: " + actionId+ " event: " + event);
 
-
-        // if "Enter" pressed check text for validity, get page md5 and clean input
-        if (event.getAction() == KeyEvent.ACTION_DOWN && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-
-            String str = inputUrl.getText().toString();
-
-            Log.d(MyActivity.TAG, "onKey: " + str);
-
-            SQLiteDatabase db = url_db.getWritableDatabase();
-            ContentValues content_value = new ContentValues();
-
-            try {
-                // ...
-                switch (new CheckUrl().execute(str).get()) {
-                    case 0:
-                        PageInfo pi = new PageInfo(str);
-                        Toast.makeText(MyActivity3.this, pi.md5sum, Toast.LENGTH_LONG).show();
-                        content_value.put(URLDBHelper.KEY_URL, pi.url);
-                        content_value.put(URLDBHelper.KEY_MD5, pi.md5sum);
-                        content_value.put(URLDBHelper.KEY_CHANGED, 0);
-                        long row_id = db.insert(URLDBHelper.DB_TABLE, null, content_value);
-                        Log.d(MyActivity.TAG, "DB insert on row " + row_id);
-
-                        // add new string to the head of list, deselect all items and clear input string
-                        ColoredString cstr = new ColoredString(str, getResources().getColor(R.color.accent_color));
-                        urls.add(0, cstr);
-                        for (int i = 0; i < urls.size(); i++) lv.setItemChecked(i, false);
-                        inputUrl.setText(null);
-                        adapter.notifyDataSetChanged();
-                        break;
-                    case 1:
-                        Toast.makeText(MyActivity3.this, res.getString(R.string.err_bad_url), Toast.LENGTH_LONG).show();
-                        break;
-                    case 2:
-                        Toast.makeText(MyActivity3.this, res.getString(R.string.err_cant_open_url), Toast.LENGTH_LONG).show();
-                        break;
-                }
-
-            } catch (InterruptedException ex) {
-                Toast.makeText(MyActivity3.this, res.getString(R.string.err_interrupted), Toast.LENGTH_LONG).show();
-                Log.d(MyActivity.TAG, "InterruptedException catched");
-            } catch (ExecutionException ex) {
-                Toast.makeText(MyActivity3.this, res.getString(R.string.err_interrupted), Toast.LENGTH_LONG).show();
-                Log.d(MyActivity.TAG, "ExecutionException catched");
-            } finally {
-                url_db.close();
-            }
+        // if "Enter" pressed check text for validity and clean input
+        if ((actionId == EditorInfo.IME_NULL) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+            Log.d(MyActivity.TAG, "onEditorAction catched Done");
+            handleUrlInput();
             return true;
         }
         return false;
     }
+
+
+    // handle hardware keyboard's "Enter"
+    public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+        // if "Enter" pressed check text for validity, get page md5 and clean input
+        if (event.getAction() == KeyEvent.ACTION_DOWN && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+            handleUrlInput();
+            return true;
+        }
+        return false;
+    }
+
+    // this code shared by onKey and onEditorAction to handle url input by software and hardware kbd's "Enter"
+    private void handleUrlInput(){
+
+        // check text for validity, get page md5, add to database and clean input
+        String str = inputUrl.getText().toString();
+
+        Log.d(MyActivity.TAG, "handleUrlInput: " + str);
+
+        SQLiteDatabase db = url_db.getWritableDatabase();
+        ContentValues content_value = new ContentValues();
+
+        try {
+            // ...
+            switch (new CheckUrl().execute(str).get()) {
+                case 0:
+                    PageInfo pi = new PageInfo(str);
+                    Toast.makeText(MyActivity3.this, pi.md5sum, Toast.LENGTH_LONG).show();
+                    content_value.put(URLDBHelper.KEY_URL, pi.url);
+                    content_value.put(URLDBHelper.KEY_MD5, pi.md5sum);
+                    content_value.put(URLDBHelper.KEY_CHANGED, 0);
+                    long row_id = db.insert(URLDBHelper.DB_TABLE, null, content_value);
+                    Log.d(MyActivity.TAG, "DB insert on row " + row_id);
+
+                    // add new string to the head of list, deselect all items and clear input string
+                    ColoredString cstr = new ColoredString(str, getResources().getColor(R.color.accent_color));
+                    urls.add(0, cstr);
+                    for (int i = 0; i < urls.size(); i++) lv.setItemChecked(i, false);
+                    inputUrl.setText(null);
+                    adapter.notifyDataSetChanged();
+                    break;
+                case 1:
+                    Toast.makeText(MyActivity3.this, getResources().getString(R.string.err_bad_url), Toast.LENGTH_LONG).show();
+                    break;
+                case 2:
+                    Toast.makeText(MyActivity3.this, getResources().getString(R.string.err_cant_open_url), Toast.LENGTH_LONG).show();
+                    break;
+            }
+
+        } catch (InterruptedException ex) {
+            Toast.makeText(MyActivity3.this, getResources().getString(R.string.err_interrupted), Toast.LENGTH_LONG).show();
+            Log.d(MyActivity.TAG, "InterruptedException catched");
+        } catch (ExecutionException ex) {
+            Toast.makeText(MyActivity3.this, getResources().getString(R.string.err_interrupted), Toast.LENGTH_LONG).show();
+            Log.d(MyActivity.TAG, "ExecutionException catched");
+        } finally {
+            url_db.close();
+        }
+
+
+    }
+
 
 
     // mostly for understanding activity life cycle
