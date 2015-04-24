@@ -299,7 +299,7 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
 
 
     DialogInterface.OnClickListener menuClickHandler = new DialogInterface.OnClickListener() {
-        @Override
+        //@Override
         public void onClick(DialogInterface dialog, int which) {
             Resources res = getResources();
             switch (which) {
@@ -327,10 +327,10 @@ public class MyActivity extends Activity implements OnClickListener, OnKeyListen
 
 
     // handle "Enter" from software keyboard. don't forget that event can be null!
-    @Override
+    //@Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 
-        Log.d(TAG, "onEditorAction (Software keyboard) actionId: " + actionId+ " event: " + event);
+        Log.d(TAG, "onEditorAction (Software keyboard ) actionId: " + actionId+ " event: " + event);
 
         // if "Enter" pressed check text for validity and clean input
         if ((actionId == EditorInfo.IME_NULL) || (actionId == EditorInfo.IME_ACTION_DONE)) {

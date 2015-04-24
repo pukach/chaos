@@ -2,3 +2,4 @@
 /gen/*
 /.idea/*
 /.gradle/*
+/target/*

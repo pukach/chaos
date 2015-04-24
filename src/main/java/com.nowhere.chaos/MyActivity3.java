@@ -206,7 +206,7 @@ public class MyActivity3 extends Activity implements View.OnKeyListener, View.On
     }
 
     // handle "Enter" from software keyboard. don't forget that event can be null!
-    @Override
+    //@Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 
         Log.d(MyActivity.TAG, "onEditor actionId: " + actionId+ " event: " + event);
@@ -430,8 +430,8 @@ class PageCrawler implements Runnable {
 
         // read content of the page and store in to String
         try {
-            URL url = null;
-            String line = null;
+            URL url;
+            String line;
 
             StringBuilder sb = new StringBuilder();
             // ... should add url control to avoid malformedurlexception
@@ -494,8 +494,7 @@ class PageCrawler implements Runnable {
 class CheckUrl extends AsyncTask<String, Void, Integer> {
 
     URL url = null;
-    //    int state = 0;
-    BufferedReader reader = null;
+    BufferedReader reader;
 
     @Override
     protected Integer doInBackground(String... s) {

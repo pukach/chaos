@@ -34,7 +34,7 @@ public class MyActivity2 extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(MyActivity.TAG, "2 activity started");
+        Log.d(com.nowhere.chaos.MyActivity.TAG, "2 activity started");
     }
 
     // mostly for understanding activity life cycle
